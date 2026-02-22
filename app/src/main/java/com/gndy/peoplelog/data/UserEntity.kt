@@ -10,4 +10,5 @@ data class UserEntity(
     val age: Int,
     val jobTitle: String,
     val gender: String,
+    val createdAt: Long
 )

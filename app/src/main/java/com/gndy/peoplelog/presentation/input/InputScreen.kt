@@ -3,8 +3,6 @@ package com.gndy.peoplelog.presentation.input
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,10 +15,8 @@ import androidx.compose.material.icons.filled.Female
 import androidx.compose.material.icons.filled.Transgender
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import kotlinx.coroutines.flow.collect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -32,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gndy.peoplelog.domain.Gender
 import com.gndy.peoplelog.ui.theme.*
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +38,6 @@ fun InputScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val scrollState = rememberScrollState()
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -55,6 +51,32 @@ fun InputScreen(
             }
         }
     }
+
+    InputScreenContent(
+        state = state,
+        onFullNameChange = viewModel::onFullNameChange,
+        onAgeChange = viewModel::onAgeChange,
+        onJobTitleChange = viewModel::onJobTitleChange,
+        onGenderSelect = viewModel::onGenderSelect,
+        onSave = viewModel::onSave,
+        onNavigateToDisplay = onNavigateToDisplay,
+        snackbarHostState = snackbarHostState
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InputScreenContent(
+    state: InputUiState,
+    onFullNameChange: (String) -> Unit,
+    onAgeChange: (String) -> Unit,
+    onJobTitleChange: (String) -> Unit,
+    onGenderSelect: (Gender) -> Unit,
+    onSave: () -> Unit,
+    onNavigateToDisplay: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    val scrollState = rememberScrollState()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -86,7 +108,7 @@ fun InputScreen(
                     }
 
                     Button(
-                        onClick = viewModel::onSave,
+                        onClick = onSave,
                         enabled = !state.isSaving,
                         modifier = Modifier
                             .weight(1.5f)
@@ -175,7 +197,7 @@ fun InputScreen(
             ) {
                 ProductionTextField(
                     value = state.fullName,
-                    onValueChange = viewModel::onFullNameChange,
+                    onValueChange = onFullNameChange,
                     label = "Full Name",
                     icon = Icons.Default.Person,
                     error = state.fullNameError
@@ -185,7 +207,7 @@ fun InputScreen(
                     Box(modifier = Modifier.weight(1f)) {
                         ProductionTextField(
                             value = state.age,
-                            onValueChange = viewModel::onAgeChange,
+                            onValueChange = onAgeChange,
                             label = "Age",
                             icon = Icons.Default.CalendarToday,
                             keyboardType = KeyboardType.Number,
@@ -195,7 +217,7 @@ fun InputScreen(
                     Box(modifier = Modifier.weight(2f)) {
                         ProductionTextField(
                             value = state.jobTitle,
-                            onValueChange = viewModel::onJobTitleChange,
+                            onValueChange = onJobTitleChange,
                             label = "Job Title",
                             icon = Icons.Default.Badge,
                             error = state.jobTitleError
@@ -219,14 +241,14 @@ fun InputScreen(
                             GenderSelectionCard(
                                 gender = gender,
                                 isSelected = state.gender == gender,
-                                onClick = { viewModel.onGenderSelect(gender) },
+                                onClick = { onGenderSelect(gender) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
                     }
                 }
                 
-                Spacer(Modifier.height(40.dp)) // Extra space for better scrolling
+                Spacer(Modifier.height(40.dp))
             }
         }
     }
@@ -340,5 +362,27 @@ private fun GenderSelectionCard(
                 color = if (isSelected) Indigo600 else Slate600
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun InputScreenPreview() {
+    PeopleLogTheme {
+        InputScreenContent(
+            state = InputUiState(
+                fullName = "Abdelrahman G.",
+                age = "25",
+                jobTitle = "Android Developer",
+                gender = Gender.Male
+            ),
+            onFullNameChange = {},
+            onAgeChange = {},
+            onJobTitleChange = {},
+            onGenderSelect = {},
+            onSave = {},
+            onNavigateToDisplay = {},
+            snackbarHostState = SnackbarHostState()
+        )
     }
 }

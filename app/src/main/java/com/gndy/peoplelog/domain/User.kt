@@ -6,4 +6,5 @@ data class User(
     val age: Int,
     val jobTitle: String,
     val gender: Gender,
+    val createdAt: Long = System.currentTimeMillis()
 )

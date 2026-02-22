@@ -9,6 +9,7 @@ fun UserEntity.toDomain(): User = User(
     age = age,
     jobTitle = jobTitle,
     gender = Gender.valueOf(gender),
+    createdAt = createdAt
 )
 
 fun User.toEntity(): UserEntity = UserEntity(
@@ -17,4 +18,5 @@ fun User.toEntity(): UserEntity = UserEntity(
     age = age,
     jobTitle = jobTitle,
     gender = gender.name,
+    createdAt = createdAt
 )
