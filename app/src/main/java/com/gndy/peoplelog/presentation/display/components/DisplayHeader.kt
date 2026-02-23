@@ -1,67 +1,66 @@
-package com.gndy.peoplelog.presentation.input.components
+package com.gndy.peoplelog.presentation.display.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gndy.peoplelog.ui.theme.Navy800
-import com.gndy.peoplelog.ui.theme.Navy900
+import com.gndy.peoplelog.ui.theme.Indigo500
+import com.gndy.peoplelog.ui.theme.Indigo700
 
 @Composable
-fun InputHeader(modifier: Modifier = Modifier) {
+fun DisplayHeader(
+    count: Int,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(340.dp)
-            .clip(RoundedCornerShape(bottomStart = 80.dp, bottomEnd = 80.dp))
+            .height(280.dp)
             .background(
                 Brush.verticalGradient(
-                    listOf(Navy800, Navy900)
+                    listOf(Indigo700, Indigo500)
                 )
             )
-            .padding(top = 70.dp, start = 24.dp, end = 24.dp),
+            .padding(top = 60.dp, start = 24.dp, end = 24.dp),
         contentAlignment = Alignment.TopStart
     ) {
         Column {
             Surface(
-                color = Color.White.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(16.dp),
+                color = Color.White.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
                 Text(
-                    "NEW MEMBER",
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                    "TOTAL MEMBERS",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp
                 )
             }
             Text(
-                "Onboarding",
+                "The Roster",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Black,
-                    fontSize = 46.sp,
-                    letterSpacing = (-1).sp
+                    fontSize = 48.sp,
+                    letterSpacing = (-1.5).sp
                 ),
                 color = Color.White
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.dp))
             Text(
-                "Fill in the details below to add a new member to\nthe professional roster.",
+                "$count professionals are currently part\nof your organized team log.",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.85f),
+                color = Color.White.copy(alpha = 0.9f),
                 lineHeight = 24.sp,
                 fontWeight = FontWeight.Medium
             )

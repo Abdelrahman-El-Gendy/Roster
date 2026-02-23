@@ -1,16 +1,22 @@
 package com.gndy.peoplelog.presentation.input
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gndy.peoplelog.domain.Gender
 import com.gndy.peoplelog.presentation.components.RosterScreenContainer
@@ -20,8 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun InputScreen(
-    viewModel: InputViewModel,
-    onNavigateToDisplay: () -> Unit,
+    viewModel: InputViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -46,7 +51,6 @@ fun InputScreen(
         onJobTitleChange = viewModel::onJobTitleChange,
         onGenderSelect = viewModel::onGenderSelect,
         onSave = viewModel::onSave,
-        onNavigateToDisplay = onNavigateToDisplay,
         snackbarHostState = snackbarHostState
     )
 }
@@ -59,88 +63,151 @@ fun InputScreenContent(
     onJobTitleChange: (String) -> Unit,
     onGenderSelect: (Gender) -> Unit,
     onSave: () -> Unit,
-    onNavigateToDisplay: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     val scrollState = rememberScrollState()
 
     RosterScreenContainer(
         snackbarHostState = snackbarHostState,
-        bottomBar = {
-            InputBottomBar(
-                isSaving = state.isSaving,
-                onNavigateToDisplay = onNavigateToDisplay,
-                onSave = onSave
-            )
-        }
+        containerColor = Color.White
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .imePadding()
+                .background(Color.White)
                 .verticalScroll(scrollState)
         ) {
             InputHeader()
 
-            Column(
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(28.dp)
+                    .padding(horizontal = 20.dp)
+                    .offset(y = (-50).dp)
+                    .shadow(
+                        elevation = 20.dp,
+                        shape = RoundedCornerShape(40.dp),
+                        spotColor = Color.Black.copy(alpha = 0.2f)
+                    ),
+                shape = RoundedCornerShape(40.dp),
+                color = Color.White
             ) {
-                ProductionTextField(
-                    value = state.fullName,
-                    onValueChange = onFullNameChange,
-                    label = "Full Name",
-                    icon = Icons.Default.Person,
-                    error = state.fullNameError
-                )
-
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
                     ProductionTextField(
-                        value = state.age,
-                        onValueChange = onAgeChange,
-                        label = "Age",
-                        icon = Icons.Default.CalendarToday,
-                        keyboardType = KeyboardType.Number,
-                        error = state.ageError,
-                        modifier = Modifier.weight(1f)
+                        value = state.fullName,
+                        onValueChange = onFullNameChange,
+                        label = "Full Name",
+                        placeholder = "e.g. John Doe",
+                        icon = Icons.Default.Person,
+                        error = state.fullNameError
                     )
-                    ProductionTextField(
-                        value = state.jobTitle,
-                        onValueChange = onJobTitleChange,
-                        label = "Job Title",
-                        icon = Icons.Default.Badge,
-                        error = state.jobTitleError,
-                        modifier = Modifier.weight(2f)
-                    )
-                }
 
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        "Member Gender",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Slate900
-                    )
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        modifier = Modifier.fillMaxWidth(), 
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Gender.entries.forEach { gender ->
+                        ProductionTextField(
+                            value = state.age,
+                            onValueChange = onAgeChange,
+                            label = "Age",
+                            placeholder = "25",
+                            icon = Icons.Default.CalendarToday,
+                            keyboardType = KeyboardType.Number,
+                            error = state.ageError,
+                            modifier = Modifier.weight(1f)
+                        )
+                        ProductionTextField(
+                            value = state.jobTitle,
+                            onValueChange = onJobTitleChange,
+                            label = "Job Title",
+                            placeholder = "Product Design",
+                            icon = Icons.Default.Badge,
+                            error = state.jobTitleError,
+                            modifier = Modifier.weight(1.5f)
+                        )
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            "MEMBER GENDER",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Black,
+                            color = Slate500,
+                            letterSpacing = 0.5.sp
+                        )
+                        
+                        // Row 1: Male, Female
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             GenderSelectionCard(
-                                gender = gender,
-                                isSelected = state.gender == gender,
-                                onClick = { onGenderSelect(gender) },
+                                gender = Gender.Male,
+                                isSelected = state.gender == Gender.Male,
+                                onClick = { onGenderSelect(Gender.Male) },
                                 modifier = Modifier.weight(1f)
+                            )
+                            GenderSelectionCard(
+                                gender = Gender.Female,
+                                isSelected = state.gender == Gender.Female,
+                                onClick = { onGenderSelect(Gender.Female) },
+                                modifier = Modifier.weight(1.3f)
+                            )
+                        }
+                        
+                        // Row 2: Other
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            GenderSelectionCard(
+                                gender = Gender.Other,
+                                isSelected = state.gender == Gender.Other,
+                                onClick = { onGenderSelect(Gender.Other) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(Modifier.weight(1.3f))
+                        }
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Button(
+                        onClick = onSave,
+                        enabled = !state.isSaving,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(68.dp),
+                        shape = RoundedCornerShape(34.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Navy800,
+                            disabledContainerColor = Navy800.copy(alpha = 0.6f)
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    ) {
+                        if (state.isSaving) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                        } else {
+                            Icon(Icons.Default.PersonAdd, contentDescription = null)
+                            Spacer(Modifier.width(12.dp))
+                            Text(
+                                "Onboard Member",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Black
                             )
                         }
                     }
                 }
-                
-                Spacer(Modifier.height(40.dp))
             }
+            
+            // Padding for the bottom bar
+            Spacer(Modifier.height(120.dp))
         }
     }
 }
@@ -151,17 +218,17 @@ fun InputScreenPreview() {
     PeopleLogTheme {
         InputScreenContent(
             state = InputUiState(
-                fullName = "Abdelrahman G.",
-                age = "25",
-                jobTitle = "Android Developer",
-                gender = Gender.Male
+                fullName = "",
+                age = "",
+                jobTitle = "",
+                gender = Gender.Female,
+                isSaving = false
             ),
             onFullNameChange = {},
             onAgeChange = {},
             onJobTitleChange = {},
             onGenderSelect = {},
             onSave = {},
-            onNavigateToDisplay = {},
             snackbarHostState = SnackbarHostState()
         )
     }
